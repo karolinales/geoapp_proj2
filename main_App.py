@@ -167,7 +167,7 @@ class MyForm(QDialog): # QDialog jako klasa nadrzedna
     def fila2pl1992(self):
         a, b, flattening, ecc2 = self.model()
         radf, radl = self.deg2rad()
-        lam0 = (19*np.pi/180) * np.pi/180
+        lam0 = 19* np.pi/180
         b2 = b ** 2
         ep2 = ((a ** 2 ) - b2) / b2
         t = np.tan(radf)
