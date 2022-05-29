@@ -16,8 +16,8 @@ class MyForm(QDialog): # QDialog jako klasa nadrzedna
         self.ui.pushButton.clicked.connect(self.sigma)
         self.ui.pushButton.clicked.connect(self.filam2gk)
         self.ui.pushButton.clicked.connect(self.gk2pl2000)
-        self.ui.pushButton.clicked.connect(self.gk2pl1992)
-        self.setWindowIcon(QtGui.QIcon('D:/Studia/Informatyka Geodezyjna/IG2/proj2/ikona.png'))
+        self.ui.pushButton.clicked.connect(self.fila2pl1992)
+        self.setWindowIcon(QtGui.QIcon('ikona.png'))
         
 
 
@@ -164,8 +164,20 @@ class MyForm(QDialog): # QDialog jako klasa nadrzedna
         self.ui.X2000.setText(f'X: {x2000:.3f}')
         self.ui.Y2000.setText((f'Y: {y2000:.3f}'))
     
-    def gk2pl1992(self):
-        xgk, ygk = self.filam2gk()
+    def fila2pl1992(self):
+        a, b, flattening, ecc2 = self.model()
+        radf, radl = self.deg2rad()
+        lam0 = (19*np.pi/180) * np.pi/180
+        b2 = b ** 2
+        ep2 = ((a ** 2 ) - b2) / b2
+        t = np.tan(radf)
+        n2 = ep2 * ((np.cos(radf)) ** 2)
+        N = a/np.sqrt(1 - (ecc2 * np.sin(radf)**2))
+        si = self.sigma()
+        d_lam = radl - lam0
+        eta2 = ep2 * np.cos(radf)**2
+        xgk = si + ((d_lam**2)/2) * N * np.sin(radf) * np.cos(radf) * (1 + ((d_lam**2)/12) * np.cos(radf)**2 * (5 - t**2 + 9 * eta2 + 4 * eta2**2) + ((d_lam**4)/360) * np.cos(radf)**4 * (61 - 18 * t**2 + t**4 + 270 * eta2 - 330 * eta2 * t**2))
+        ygk = d_lam * N * np.cos(radf) * (1 + d_lam**2/6 * np.cos(radf)**2 * (1 - t**2 + eta2) + d_lam**4/120 * np.cos(radf)**4 * (5 - 18 * t**2 + t**4 + 14 * eta2 - 58 * eta2 * t**2))
         x92 = xgk * 0.9993 - 5300000
         y92 = ygk * 0.9993 + 500000
         self.ui.X1992.setText(f'X: {x92:.3f}')
