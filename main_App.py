@@ -1,4 +1,4 @@
-from __future__ import unicode_literals # obsluga polskich znaków diaktrtycznych
+from __future__ import unicode_literals # obsluga polskich znakÃ³w diaktrtycznych
 import sys
 from PyQt5.QtWidgets import QDialog, QApplication
 from demo_App import * # import kodu pythona ze schematem GUI
@@ -16,7 +16,7 @@ class MyForm(QDialog): # QDialog jako klasa nadrzedna
         self.ui.pushButton.clicked.connect(self.sigma)
         self.ui.pushButton.clicked.connect(self.filam2gk)
         self.ui.pushButton.clicked.connect(self.gk2pl2000)
-        self.ui.pushButton.clicked.connect(self.fila2pl1992)
+        self.ui.pushButton.clicked.connect(self.gk2pl1992)
         self.setWindowIcon(QtGui.QIcon('ikona.png'))
         
 
@@ -118,14 +118,35 @@ class MyForm(QDialog): # QDialog jako klasa nadrzedna
         
 
     def strefa(self):
+        fi, lam = self.deg2rad()
+        lam = lam * 180/np.pi
         if self.ui.radioButtonZ5.isChecked():
-            strefa = 5
+            if lam > 13.5 and lam <= 16.5:
+                strefa = 5
+            else: 
+                self.ui.X2000.setText('Wybrano złą strefę')
+                self.ui.Y2000.setText('Wybrano złą strefę')
         elif self.ui.radioButtonZ6.isChecked():
-            strefa = 6
+            if lam > 16.5 and lam <= 19.5:
+                strefa = 6
+            else: 
+                self.ui.X2000.setText('Wybrano złą strefę')
+                self.ui.Y2000.setText('Wybrano złą strefę')
         elif self.ui.radioButtonZ7.isChecked():
-            strefa = 7
+            if lam > 19.5 and lam <= 22.5:
+                strefa = 7
+            else: 
+                self.ui.X2000.setText('Wybrano złą strefę')
+                self.ui.Y2000.setText('Wybrano złą strefę')
         elif self.ui.radioButtonZ8.isChecked():
-            strefa = 8
+            if lam > 22.5 and lam <= 25.5:
+                strefa = 8
+            else: 
+                self.ui.X2000.setText('Wybrano złą strefę')
+                self.ui.Y2000.setText('Wybrano złą strefę')
+        else:
+            self.ui.X2000.setText('Nie wybrano strefy!')
+            self.ui.Y2000.setText('Nie wybrano strefy!')
         return strefa
     
         
@@ -164,10 +185,10 @@ class MyForm(QDialog): # QDialog jako klasa nadrzedna
         self.ui.X2000.setText(f'X: {x2000:.3f}')
         self.ui.Y2000.setText((f'Y: {y2000:.3f}'))
     
-    def fila2pl1992(self):
+    def gk2pl1992(self):
         a, b, flattening, ecc2 = self.model()
         radf, radl = self.deg2rad()
-        lam0 = 19* np.pi/180
+        lam0 = 19 * np.pi/180
         b2 = b ** 2
         ep2 = ((a ** 2 ) - b2) / b2
         t = np.tan(radf)
